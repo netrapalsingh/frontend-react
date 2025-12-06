@@ -4,10 +4,26 @@ function formatPrice(p){ return `₹${(p/100).toFixed(2)}` }
 
 const SAMPLE_MENU = [
   // auto-detected local images from `images/` folder
-  { id: 1, name: 'Margherita Pizza', price: 29900, desc: 'Classic cheese tomato', img: 'images/margherita.svg', prepTime: 12, rating: 4.4 },
+  { id: 1, name: 'Margherita Pizza', price: 29900, desc: 'Classic cheese tomato', img: 'images/margherita.jpg', prepTime: 12, rating: 4.4 },
   { id: 2, name: 'Paneer Butter Masala', price: 19900, desc: 'Cottage cheese in creamy gravy', img: 'images/paneer.svg', prepTime: 18, rating: 4.6 },
   { id: 3, name: 'Veg Biryani', price: 15900, desc: 'Fragrant spiced rice with veggies', img: 'images/biryani.svg', prepTime: 25, rating: 4.2 },
   { id: 4, name: 'Masala Dosa', price: 12000, desc: 'Crispy dosa with potato masala', img: 'images/dosa.svg', prepTime: 10, rating: 4.7 },
+    { id: 5, name: 'Farmhouse Pizza', price: 34900, desc: 'Loaded with veggies and cheese', img: 'images/farmhouse.jpg', prepTime: 15, rating: 4.5 },
+    { id: 6, name: 'Pepperoni Pizza', price: 39900, desc: 'Pepperoni, mozzarella, tomato sauce', img: 'images/pepperoni.jpg', prepTime: 14, rating: 4.7 },
+    { id: 7, name: 'Paneer Tikka Pizza', price: 36900, desc: 'Spicy paneer tikka, onions, capsicum', img: 'images/paneer-tikka.jpg', prepTime: 16, rating: 4.6 },
+    { id: 8, name: 'Veggie Supreme Pizza', price: 32900, desc: 'Mixed veggies, olives, jalapenos', img: 'images/veggie-supreme.jpg', prepTime: 13, rating: 4.3 },
+  // Sample Burgers
+  { id: 9, name: 'Classic Veg Burger', price: 14900, desc: 'Veg patty, lettuce, tomato, cheese', img: 'images/veg-burger.jpg', prepTime: 8, rating: 4.2 },
+  { id: 10, name: 'Paneer Burger', price: 17900, desc: 'Paneer patty, onions, spicy mayo', img: 'images/paneer-burger.jpg', prepTime: 9, rating: 4.4 },
+  { id: 11, name: 'Cheese Burst Burger', price: 16900, desc: 'Cheese-filled patty, veggies', img: 'images/cheese-burger.jpg', prepTime: 7, rating: 4.3 },
+  // Sample Drinks
+  { id: 12, name: 'Cold Coffee', price: 9900, desc: 'Chilled coffee with ice cream', img: 'images/cold-coffee.jpg', prepTime: 3, rating: 4.5 },
+  { id: 13, name: 'Fresh Lime Soda', price: 6900, desc: 'Refreshing lime soda', img: 'images/lime-soda.jpg', prepTime: 2, rating: 4.1 },
+  { id: 14, name: 'Masala Chai', price: 5900, desc: 'Spiced Indian tea', img: 'images/masala-chai.jpg', prepTime: 4, rating: 4.6 },
+  // Sample Desserts
+  { id: 15, name: 'Chocolate Brownie', price: 12900, desc: 'Rich chocolate brownie', img: 'images/brownie.jpg', prepTime: 5, rating: 4.7 },
+  { id: 16, name: 'Gulab Jamun', price: 9900, desc: 'Soft sweet balls in syrup', img: 'images/gulab-jamun.jpg', prepTime: 4, rating: 4.8 },
+  { id: 17, name: 'Ice Cream Sundae', price: 11900, desc: 'Vanilla ice cream, chocolate sauce', img: 'images/sundae.jpg', prepTime: 3, rating: 4.5 },
 ];
 
 function App(){
@@ -38,47 +54,90 @@ function App(){
 
   const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
 
+  // Category definitions
+  const categories = [
+    { key: 'pizza', label: 'Pizza', match: item => item.name.toLowerCase().includes('pizza') },
+    { key: 'burgers', label: 'Burgers', match: item => item.name.toLowerCase().includes('burger') },
+    { key: 'drinks', label: 'Drinks', match: item => ['coffee','chai','soda','drink'].some(word => item.name.toLowerCase().includes(word)) },
+    { key: 'desserts', label: 'Desserts', match: item => ['dessert','brownie','jamun','ice cream','sundae'].some(word => item.name.toLowerCase().includes(word)) }
+  ];
+
+  // Scroll to section handler
+  function scrollToCategory(key) {
+    const el = document.getElementById(key);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   return (
     <div>
       <Header cart={cart} onCartClick={() => setShowCart(true)} />
-      
+
       <section className="menu-section">
-        <h2>Our Menu</h2>
-        <div className="menu-grid">
-          {menu.map(item=> (
-            <div className="card" key={item.id}>
-              {item.img && (
-                <div className="card-image">
-                  {(() => {
-                    const src = String(item.img || '');
-                    const isRemote = src.startsWith('http://') || src.startsWith('https://');
-                    return (
-                      <img
-                        src={isRemote ? src : '/' + src}
-                        alt={item.name}
-                        loading="lazy"
-                      />
-                    );
-                  })()}
-                </div>
-              )}
-              <div className="card-content">
-                <h3>{item.name}</h3>
-                <div className="card-desc">{item.desc}</div>
-                <div className="card-meta">
-                  <span className="card-price">{formatPrice(item.price)}</span>
-                  {typeof item.rating === 'number' && (
-                    <span className="card-rating">
-                      ★ {Number(item.rating).toFixed(1)}
-                    </span>
-                  )}
-                </div>
-                {typeof item.prepTime === 'number' && (
-                  <div className="card-time">
-                    ⏱️ {item.prepTime} min
+        {/* Removed 'Our Menu' heading to utilize more space */}
+        {/* Category Sections */}
+        <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
+          {categories.map(cat => (
+            <div key={cat.key} id={cat.key} style={{ marginBottom: 32, scrollMarginTop: 165 }}>
+              <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#2c3e50', letterSpacing: '1px', marginBottom: 18, textShadow: '0 2px 8px rgba(255,107,53,0.10)' }}>{cat.label}</h2>
+              <div className="menu-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: '24px',
+                width: '100%'
+              }}>
+                {menu.filter(cat.match).map(item => (
+                  <div className="card" key={item.id} style={{ width: '280px', minWidth: '280px', maxWidth: '280px', margin: '0 auto' }}>
+                    {item.img && (
+                      <div className="card-image">
+                        <img src={'/' + item.img} alt={item.name} loading="lazy" />
+                      </div>
+                    )}
+                    <div className="card-content">
+                      <h3>{item.name}</h3>
+                      <div className="card-desc">{item.desc}</div>
+                      <div className="card-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '8px', width: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <span className="card-discount-label" style={{
+                            display: 'inline-block',
+                            background: '#e3f2fd',
+                            color: '#1976d2',
+                            fontWeight: 700,
+                            fontSize: '0.92rem',
+                            padding: '2px 10px',
+                            borderRadius: '12px',
+                            marginBottom: '6px',
+                            letterSpacing: '0.5px',
+                          }}>FLAT 10% OFF</span>
+                          <span className="card-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '1rem', textDecoration: 'line-through', display: 'block' }}>{formatPrice(item.price)}</span>
+                          <span className="card-discounted-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '1.05rem', display: 'block', marginTop: '2px' }}>{formatPrice(Math.round(item.price * 0.9))}</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          {typeof item.rating === 'number' && (
+                            <span className="card-rating" style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.95rem' }}>★ {Number(item.rating).toFixed(1)}</span>
+                          )}
+                          {typeof item.prepTime === 'number' && (
+                            <div className="card-time" style={{ fontSize: '0.95rem', color: '#7f8c8d', marginTop: '2px' }}>⏱️ {item.prepTime} min</div>
+                          )}
+                        </div>
+                      </div>
+                      <button onClick={()=>addToCart(item)} style={{
+                        background: '#27ae60',
+                        border: 'none',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        padding: '7px 18px',
+                        borderRadius: '18px',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(34,197,94,0.10)',
+                        marginTop: '6px',
+                        transition: 'background 0.2s, box-shadow 0.2s',
+                      }}>Add to Cart</button>
+                    </div>
                   </div>
-                )}
-                <button onClick={()=>addToCart(item)}>Add to Cart</button>
+                ))}
               </div>
             </div>
           ))}
