@@ -1,0 +1,20 @@
+{
+  "coupons": [
+    {
+      "code": "FIRST10",
+      "type": "percent",
+      "value": 10,
+      "expiry": "2030-01-01T00:00:00Z",
+      "oneTime": true,
+      "description": "10% off for your first order"
+    },
+    {
+      "code": "WELCOME10",
+      "type": "percent",
+      "value": 10,
+      "expiry": "2030-01-01T00:00:00Z",
+      "oneTime": false,
+      "description": "Welcome back — 10% off"
+    }
+  ]
+}

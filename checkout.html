@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checkout - BRO'$ CAFE</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      * { box-sizing: border-box; }
+      body { 
+        font-family: 'Segoe UI', 'Helvetica Neue', sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+        margin: 0;
+        color: #2c3e50;
+      }
+      .container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 16px;
+      }
+      header { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        padding: 16px 24px; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 12px rgba(44, 62, 80, 0.25);
+        margin-bottom: 32px;
+        position: sticky;
+        top: 16px;
+        z-index: 100;
+      }
+      header h1 {
+        color: #fff;
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      header a {
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+      header a:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+      .checkout {
+        background: #fff;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 32px;
+      }
+      .checkout h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+      button { cursor:pointer; border:none; border-radius:8px; padding:12px 16px; font-weight:600; font-size:15px; transition:all 0.3s ease; }
+      .btn-primary { background: linear-gradient(135deg, #ff6b35 0%, #ee5a24 100%); color: #fff; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3); }
+      .btn-secondary { background: #ecf0f1; color: #2c3e50; }
+      .btn-secondary:hover { background: #dee2e6; }
+      .btn-danger { background: #e74c3c; color: #fff; }
+      .btn-danger:hover { background: #c0392b; }
+      .promo-banner { margin-bottom:20px; background:linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%); border:2px solid #ffc107; padding:16px; border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:16px; box-shadow:0 2px 8px rgba(255,193,7,0.2); }
+      .promo-banner-text { color:#856404; font-weight:700; font-size:16px; }
+      .promo-banner-text .discount { color:#155724; font-size:18px; }
+      .coupon-section { margin-bottom:20px; background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border:1px solid #dee2e6; padding:16px; border-radius:10px; }
+      .coupon-section label { font-weight:700; margin-bottom:12px; display:block; color:#2c3e50; }
+      .coupon-input-group { display:flex; gap:8px; align-items:center; }
+      .coupon-input-group input { flex:1; padding:10px 12px; border:1px solid #ced4da; border-radius:6px; font-size:14px; }
+      .coupon-input-group input:focus { outline:none; border-color:#ff6b35; box-shadow:0 0 0 3px rgba(255,107,53,0.1); }
+      .coupon-error { color:#c82333; margin-top:8px; font-size:13px; font-weight:600; }
+      .coupon-success { color:#155724; margin-top:8px; font-size:13px; font-weight:600; }
+      .cart-item { padding:12px 0; border-bottom:1px solid #ecf0f1; margin-bottom:12px; }
+      .cart-item:last-child { border-bottom:none; }
+      .cart-item-name { font-weight:600; color:#2c3e50; margin-bottom:4px; }
+      .cart-item-price { color:#7f8c8d; font-size:14px; margin-bottom:8px; }
+      .cart-item-qty { color:#95a5a6; font-size:13px; }
+      .qty-controls { display:flex; gap:6px; margin-top:8px; }
+      .qty-controls button { padding:6px 12px; background:#ecf0f1; color:#ff6b35; }
+      .qty-controls button:hover { background:#dee2e6; }
+      .summary-section { margin-top:20px; padding-top:16px; border-top:2px solid #ecf0f1; }
+      .summary-row { display:flex; justify-content:space-between; margin-bottom:12px; font-size:16px; color:#2c3e50; }
+      .summary-row.subtotal { font-weight:600; }
+      .summary-row.discount { color:#27ae60; font-weight:600; }
+      .summary-row.total { font-size:20px; font-weight:700; color:#ff6b35; padding-top:12px; border-top:1px solid #ff6b35; }
+      .action-buttons { display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
+      .action-buttons .btn-primary { flex:1; min-width:150px; }
+      .empty-cart { text-align:center; padding:40px 20px; color:#7f8c8d; font-size:16px; }
+      .site-footer { background:linear-gradient(135deg, #2c3e50 0%, #1a252f 100%); color:#ecf0f1; padding:40px 24px; border-radius:12px; margin-top:48px; }
+      .site-footer .footer-grid { display:flex; gap:40px; flex-wrap:wrap; max-width:1200px; margin:0 auto; }
+      .site-footer .footer-col { flex:1 1 220px; min-width:180px; }
+      .site-footer h4 { margin:0 0 12px 0; font-size:18px; font-weight:700; color:#fff; }
+      .site-footer p { margin:8px 0; color:#bdc3c7; font-size:14px; line-height:1.6; }
+      .site-footer a { color:#3498db; text-decoration:none; transition:color 0.3s ease; }
+      .site-footer a:hover { color:#2980b9; text-decoration:underline; }
+      .site-footer .footer-small { text-align:center; font-size:13px; color:#95a5a6; margin-top:24px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1); }
+      @media (max-width:768px){ header { flex-direction:column; gap:12px; text-align:center; } header h1 { font-size:24px; } .promo-banner { flex-direction:column; text-align:center; gap:12px; } .coupon-input-group { flex-direction:column; } .coupon-input-group input { width:100%; } .action-buttons { flex-direction:column; } .action-buttons .btn-primary { flex:1; } .site-footer .footer-grid { flex-direction:column; gap:24px; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🍽️ BRO'$ CAFE - Checkout</h1>
+        <div>
+          <a href="/index.html">Back to menu</a>
+        </div>
+      </header>
+
+      <main style="margin-top:16px">
+        <div id="checkout-root"></div>
+      </main>
+
+      <footer class="site-footer" aria-label="Site footer">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>BRO'$ CAFE</h4>
+            <p>1st Floor, Over the domino's, KD TOWER, Kumher Gate Cir, Bajrangnagar Colony, U.I.T Colony, Bharatpur, Rajasthan 321001</p>
+            <p><a href="tel:+911234567890">Phone: +91 12345 67890</a></p>
+            <p>
+              <a href="https://share.google/SBxNfP2KBEnUtCkl4" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:#cbd9df">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#cbd9df"/>
+                  <circle cx="12" cy="9" r="2.5" fill="#21303a"/>
+                </svg>
+                View on Google Maps
+              </a>
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Hours</h4>
+            <p>Mon–Fri: 10:00 — 22:00</p>
+            <p>Sat–Sun: 09:00 — 23:00</p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Follow Us</h4>
+            <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+              <a href="https://instagram.com" target="_blank" rel="noopener" title="Instagram" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius:50%; transition:all 0.3s ease; color:#fff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.266.069 1.646.069 4.85 0 3.204-.012 3.584-.07 4.85-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.85-.07-3.251-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
+                </svg>
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener" title="Facebook" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:#1877F2; border-radius:50%; transition:all 0.3s ease; color:#fff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener" title="Twitter" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:#000000; border-radius:50%; transition:all 0.3s ease; color:#fff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.953 4.57a10 10 0 002.856-3.51 9.86 9.86 0 01-2.836.856 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417a9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+              </a>
+            </div>
+            <p><a href="mailto:hello@broscafe.example">hello@broscafe.example</a></p>
+          </div>
+        </div>
+        <div class="footer-small">© 2025 BRO'$ CAFE — Built with ❤️. All prices inclusive of taxes.</div>
+      </footer>
+    </div>
+
+    <script type="text/babel" data-type="module" src="src/checkout.jsx"></script>
+  </body>
+</html>
