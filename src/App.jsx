@@ -2,41 +2,26 @@ const { useState, useEffect } = React;
 
 function formatPrice(p){ return `₹${(p/100).toFixed(2)}` }
 
-const SAMPLE_MENU = [
-  // auto-detected local images from `images/` folder
-  { id: 1, name: 'Margherita Pizza', price: 29900, desc: 'Classic cheese tomato', img: 'images/margherita.jpg', prepTime: 12, rating: 4.4 },
-  { id: 2, name: 'Paneer Butter Masala', price: 19900, desc: 'Cottage cheese in creamy gravy', img: 'images/paneer.svg', prepTime: 18, rating: 4.6 },
-  { id: 3, name: 'Veg Biryani', price: 15900, desc: 'Fragrant spiced rice with veggies', img: 'images/biryani.svg', prepTime: 25, rating: 4.2 },
-  { id: 4, name: 'Masala Dosa', price: 12000, desc: 'Crispy dosa with potato masala', img: 'images/dosa.svg', prepTime: 10, rating: 4.7 },
-    { id: 5, name: 'Farmhouse Pizza', price: 34900, desc: 'Loaded with veggies and cheese', img: 'images/farmhouse.jpg', prepTime: 15, rating: 4.5 },
-    { id: 6, name: 'Pepperoni Pizza', price: 39900, desc: 'Pepperoni, mozzarella, tomato sauce', img: 'images/pepperoni.jpg', prepTime: 14, rating: 4.7 },
-    { id: 7, name: 'Paneer Tikka Pizza', price: 36900, desc: 'Spicy paneer tikka, onions, capsicum', img: 'images/paneer-tikka.jpg', prepTime: 16, rating: 4.6 },
-    { id: 8, name: 'Veggie Supreme Pizza', price: 32900, desc: 'Mixed veggies, olives, jalapenos', img: 'images/veggie-supreme.jpg', prepTime: 13, rating: 4.3 },
-  // Sample Burgers
-  { id: 9, name: 'Classic Veg Burger', price: 14900, desc: 'Veg patty, lettuce, tomato, cheese', img: 'images/veg-burger.jpg', prepTime: 8, rating: 4.2 },
-  { id: 10, name: 'Paneer Burger', price: 17900, desc: 'Paneer patty, onions, spicy mayo', img: 'images/paneer-burger.jpg', prepTime: 9, rating: 4.4 },
-  { id: 11, name: 'Cheese Burst Burger', price: 16900, desc: 'Cheese-filled patty, veggies', img: 'images/cheese-burger.jpg', prepTime: 7, rating: 4.3 },
-  // Sample Drinks
-  { id: 12, name: 'Cold Coffee', price: 9900, desc: 'Chilled coffee with ice cream', img: 'images/cold-coffee.jpg', prepTime: 3, rating: 4.5 },
-  { id: 13, name: 'Fresh Lime Soda', price: 6900, desc: 'Refreshing lime soda', img: 'images/lime-soda.jpg', prepTime: 2, rating: 4.1 },
-  { id: 14, name: 'Masala Chai', price: 5900, desc: 'Spiced Indian tea', img: 'images/masala-chai.jpg', prepTime: 4, rating: 4.6 },
-  // Sample Desserts
-  { id: 15, name: 'Chocolate Brownie', price: 12900, desc: 'Rich chocolate brownie', img: 'images/brownie.jpg', prepTime: 5, rating: 4.7 },
-  { id: 16, name: 'Gulab Jamun', price: 9900, desc: 'Soft sweet balls in syrup', img: 'images/gulab-jamun.jpg', prepTime: 4, rating: 4.8 },
-  { id: 17, name: 'Ice Cream Sundae', price: 11900, desc: 'Vanilla ice cream, chocolate sauce', img: 'images/sundae.jpg', prepTime: 3, rating: 4.5 },
-];
-
-function App(){
-  const [menu,setMenu] = useState(SAMPLE_MENU);
+function App() {
+  const [menu, setMenu] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [showCart, setShowCart] = useState(false);
-  const [cart,setCart] = useState(() => {
+  const [cart, setCart] = useState(() => {
     try { return JSON.parse(localStorage.getItem('cart')||'[]') } catch(e){ return [] }
   });
 
   useEffect(()=>{
     localStorage.setItem('cart', JSON.stringify(cart));
-    const count = cart.reduce((s,i)=>s+i.qty,0);
   },[cart]);
+
+  useEffect(() => {
+    fetch('categories.json')
+      .then(res => res.json())
+      .then(data => setCategories(data));
+    fetch('menu.json')
+      .then(res => res.json())
+      .then(data => setMenu(data));
+  }, []);
 
   function addToCart(item){
     setCart(prev => {
@@ -54,15 +39,6 @@ function App(){
 
   const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
 
-  // Category definitions
-  const categories = [
-    { key: 'pizza', label: 'Pizza', match: item => item.name.toLowerCase().includes('pizza') },
-    { key: 'burgers', label: 'Burgers', match: item => item.name.toLowerCase().includes('burger') },
-    { key: 'drinks', label: 'Drinks', match: item => ['coffee','chai','soda','drink'].some(word => item.name.toLowerCase().includes(word)) },
-    { key: 'desserts', label: 'Desserts', match: item => ['dessert','brownie','jamun','ice cream','sundae'].some(word => item.name.toLowerCase().includes(word)) }
-  ];
-
-  // Scroll to section handler
   function scrollToCategory(key) {
     const el = document.getElementById(key);
     if (el) {
@@ -75,8 +51,6 @@ function App(){
       <Header cart={cart} onCartClick={() => setShowCart(true)} />
 
       <section className="menu-section">
-        {/* Removed 'Our Menu' heading to utilize more space */}
-        {/* Category Sections */}
         <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
           {categories.map(cat => (
             <div key={cat.key} id={cat.key} style={{ marginBottom: 32, scrollMarginTop: 165 }}>
@@ -87,57 +61,84 @@ function App(){
                 gap: '24px',
                 width: '100%'
               }}>
-                {menu.filter(cat.match).map(item => (
-                  <div className="card" key={item.id} style={{ width: '280px', minWidth: '280px', maxWidth: '280px', margin: '0 auto' }}>
-                    {item.img && (
-                      <div className="card-image">
-                        <img src={'/' + item.img} alt={item.name} loading="lazy" />
-                      </div>
-                    )}
-                    <div className="card-content">
-                      <h3>{item.name}</h3>
-                      <div className="card-desc">{item.desc}</div>
-                      <div className="card-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '8px', width: '100%' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <span className="card-discount-label" style={{
-                            display: 'inline-block',
-                            background: '#e3f2fd',
-                            color: '#1976d2',
+                {(() => {
+                  const items = menu.filter(item => item.category === cat.key);
+                  // Sort: in-stock first, out-of-stock last
+                  items.sort((a, b) => {
+                    const aOut = a.stock === 0;
+                    const bOut = b.stock === 0;
+                    if (aOut === bOut) return 0;
+                    return aOut ? 1 : -1;
+                  });
+                  return items.map(item => {
+                    const outOfStock = item.stock === 0;
+                    return (
+                    <div
+                      className="card menu-card"
+                      key={item.id}
+                      style={{
+                        width: '280px', minWidth: '280px', maxWidth: '280px', margin: '0 auto',
+                        opacity: outOfStock ? 0.5 : 1,
+                        pointerEvents: outOfStock ? 'none' : 'auto',
+                        filter: outOfStock ? 'grayscale(0.7)' : 'none',
+                        background: outOfStock ? '#f3f3f3' : '#fff',
+                      }}
+                    >
+                      {item.img && (
+                        <div className="card-image">
+                          <img src={'/' + item.img} alt={item.name} loading="lazy" />
+                        </div>
+                      )}
+                      <div className="card-content">
+                        <h3 style={{fontSize:'0.9rem',margin:'0 0 4px 0'}}>{item.name}</h3>
+                        <div className="card-desc" style={{fontSize:'0.8rem',marginBottom:'4px'}}>{item.desc}</div>
+                        <div className="card-meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '6px', width: '100%' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <span className="card-discount-label" style={{
+                              display: 'inline-block',
+                              background: '#e3f2fd',
+                              color: '#1976d2',
+                              fontWeight: 700,
+                              fontSize: '0.75rem',
+                              padding: '1px 6px',
+                              borderRadius: '10px',
+                              marginBottom: '4px',
+                              letterSpacing: '0.5px',
+                            }}>FLAT 10% OFF</span>
+                            <span className="card-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '0.8rem', textDecoration: 'line-through', display: 'block' }}>{formatPrice(item.price)}</span>
+                            <span className="card-discounted-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '0.85rem', display: 'block', marginTop: '2px' }}>{formatPrice(Math.round(item.price * 0.9))}</span>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            {typeof item.rating === 'number' && (
+                              <span className="card-rating" style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.8rem' }}>★ {Number(item.rating).toFixed(1)}</span>
+                            )}
+                            {typeof item.prepTime === 'number' && (
+                              <div className="card-time" style={{ fontSize: '0.8rem', color: '#7f8c8d', marginTop: '2px' }}>⏱️ {item.prepTime} min</div>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => addToCart(item)}
+                          disabled={outOfStock}
+                          style={{
+                            background: outOfStock ? '#ccc' : '#27ae60',
+                            border: 'none',
+                            color: outOfStock ? '#888' : '#fff',
                             fontWeight: 700,
-                            fontSize: '0.92rem',
-                            padding: '2px 10px',
-                            borderRadius: '12px',
-                            marginBottom: '6px',
-                            letterSpacing: '0.5px',
-                          }}>FLAT 10% OFF</span>
-                          <span className="card-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '1rem', textDecoration: 'line-through', display: 'block' }}>{formatPrice(item.price)}</span>
-                          <span className="card-discounted-price" style={{ fontWeight: 700, color: '#2c3e50', fontSize: '1.05rem', display: 'block', marginTop: '2px' }}>{formatPrice(Math.round(item.price * 0.9))}</span>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                          {typeof item.rating === 'number' && (
-                            <span className="card-rating" style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.95rem' }}>★ {Number(item.rating).toFixed(1)}</span>
-                          )}
-                          {typeof item.prepTime === 'number' && (
-                            <div className="card-time" style={{ fontSize: '0.95rem', color: '#7f8c8d', marginTop: '2px' }}>⏱️ {item.prepTime} min</div>
-                          )}
-                        </div>
+                            fontSize: '0.85rem',
+                            padding: '5px 12px',
+                            borderRadius: '14px',
+                            cursor: outOfStock ? 'not-allowed' : 'pointer',
+                            boxShadow: '0 1px 4px rgba(34,197,94,0.10)',
+                            marginTop: '4px',
+                            transition: 'background 0.2s, box-shadow 0.2s',
+                          }}
+                        >{outOfStock ? 'Out of Stock' : 'Add to Cart'}</button>
                       </div>
-                      <button onClick={()=>addToCart(item)} style={{
-                        background: '#27ae60',
-                        border: 'none',
-                        color: '#fff',
-                        fontWeight: 700,
-                        fontSize: '1rem',
-                        padding: '7px 18px',
-                        borderRadius: '18px',
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 8px rgba(34,197,94,0.10)',
-                        marginTop: '6px',
-                        transition: 'background 0.2s, box-shadow 0.2s',
-                      }}>Add to Cart</button>
                     </div>
-                  </div>
-                ))}
+                    );
+                  });
+                })()}
               </div>
             </div>
           ))}
@@ -169,14 +170,59 @@ function App(){
                 <span>Total:</span>
                 <span style={{color:'#ff6b35'}}>{formatPrice(subtotal)}</span>
               </div>
-              <button onClick={()=>{ window.location = '/checkout.html' }} style={{width:'100%',padding:12,background:'linear-gradient(135deg, #ff6b35 0%, #ee5a24 100%)',color:'#fff',border:'none',borderRadius:8,fontWeight:600,cursor:'pointer',marginBottom:8,transition:'all 0.3s',fontSize:16}}>Proceed to Checkout</button>
-              <button onClick={clearCart} style={{width:'100%',padding:12,background:'#ecf0f1',border:'none',borderRadius:8,fontWeight:600,cursor:'pointer',color:'#2c3e50',transition:'all 0.3s',fontSize:16}}>Clear Cart</button>
+              <div style={{display:'flex',gap:10,flexDirection:'row',marginBottom:8}}>
+                <button onClick={()=>{ window.location = '/checkout.html' }} style={{flex:1,minWidth:140,padding:12,background:'linear-gradient(135deg, #27ae60 0%, #43e97b 100%)',color:'#fff',border:'none',borderRadius:8,fontWeight:600,cursor:'pointer',transition:'all 0.3s',fontSize:16}}>Pay Now</button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       <Footer />
+      <style>{`
+        @media (max-width: 600px) {
+          .menu-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+            gap: 12px !important;
+          }
+          .menu-card {
+            width: 160px !important;
+            min-width: 160px !important;
+            max-width: 160px !important;
+          }
+          .menu-card .card-image {
+            height: 80px !important;
+          }
+          .menu-card .card-content {
+            padding: 8px !important;
+          }
+          .menu-card h3 {
+            font-size: 0.95rem !important;
+          }
+          .menu-card .card-desc {
+            font-size: 0.8rem !important;
+          }
+          .menu-card .card-meta {
+            gap: 4px !important;
+            margin-bottom: 4px !important;
+          }
+          .menu-card .card-discount-label {
+            font-size: 0.7rem !important;
+            padding: 1px 4px !important;
+          }
+          .menu-card .card-price, .menu-card .card-discounted-price {
+            font-size: 0.8rem !important;
+          }
+          .menu-card .card-rating, .menu-card .card-time {
+            font-size: 0.7rem !important;
+          }
+          .menu-card button {
+            font-size: 0.85rem !important;
+            padding: 5px 8px !important;
+            border-radius: 12px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

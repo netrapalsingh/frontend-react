@@ -1,0 +1,16 @@
+[
+  { "id": 1, "name": "Margherita Pizza", "price": 29900, "desc": "Classic cheese tomato", "img": "images/margherita.jpg", "prepTime": 12, "rating": 4.4, "category": "pizza", "stock": 0 },
+  { "id": 2, "name": "Farmhouse Pizza", "price": 34900, "desc": "Loaded with veggies and cheese", "img": "images/farmhouse.jpg", "prepTime": 15, "rating": 4.5, "category": "pizza", "stock": 0 },
+  { "id": 3, "name": "Pepperoni Pizza", "price": 39900, "desc": "Pepperoni, mozzarella, tomato sauce", "img": "images/pepperoni.jpg", "prepTime": 14, "rating": 4.7, "category": "pizza", "stock": 2 },
+  { "id": 4, "name": "Paneer Tikka Pizza", "price": 36900, "desc": "Spicy paneer tikka, onions, capsicum", "img": "images/paneer-tikka.jpg", "prepTime": 16, "rating": 4.6, "category": "pizza", "stock": 0 },
+  { "id": 5, "name": "Veggie Supreme Pizza", "price": 32900, "desc": "Mixed veggies, olives, jalapenos", "img": "images/veggie-supreme.jpg", "prepTime": 13, "rating": 4.3, "category": "pizza", "stock": 3 },
+  { "id": 6, "name": "Classic Veg Burger", "price": 14900, "desc": "Veg patty, lettuce, tomato, cheese", "img": "images/veg-burger.jpg", "prepTime": 8, "rating": 4.2, "category": "burgers", "stock": 0 },
+  { "id": 7, "name": "Paneer Burger", "price": 17900, "desc": "Paneer patty, onions, spicy mayo", "img": "images/paneer-burger.jpg", "prepTime": 9, "rating": 4.4, "category": "burgers" },
+  { "id": 8, "name": "Cheese Burst Burger", "price": 16900, "desc": "Cheese-filled patty, veggies", "img": "images/cheese-burger.jpg", "prepTime": 7, "rating": 4.3, "category": "burgers" },
+  { "id": 9, "name": "Cold Coffee", "price": 9900, "desc": "Chilled coffee with ice cream", "img": "images/cold-coffee.jpg", "prepTime": 3, "rating": 4.5, "category": "drinks" },
+  { "id": 10, "name": "Fresh Lime Soda", "price": 6900, "desc": "Refreshing lime soda", "img": "images/lime-soda.jpg", "prepTime": 2, "rating": 4.1, "category": "drinks" },
+  { "id": 11, "name": "Masala Chai", "price": 5900, "desc": "Spiced Indian tea", "img": "images/masala-chai.jpg", "prepTime": 4, "rating": 4.6, "category": "drinks" },
+  { "id": 12, "name": "Chocolate Brownie", "price": 12900, "desc": "Rich chocolate brownie", "img": "images/brownie.jpg", "prepTime": 5, "rating": 4.7, "category": "desserts" },
+  { "id": 13, "name": "Gulab Jamun", "price": 9900, "desc": "Soft sweet balls in syrup", "img": "images/gulab-jamun.jpg", "prepTime": 4, "rating": 4.8, "category": "desserts" },
+  { "id": 14, "name": "Ice Cream Sundae", "price": 11900, "desc": "Vanilla ice cream, chocolate sauce", "img": "images/sundae.jpg", "prepTime": 3, "rating": 4.5, "category": "desserts" }
+]

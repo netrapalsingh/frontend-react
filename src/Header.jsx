@@ -4,53 +4,61 @@ const Header = ({ cart, onCartClick }) => {
     React.useEffect(() => {
       const handleScroll = () => {
         const categories = ['pizza', 'burgers', 'drinks', 'desserts'];
-        let found = 'pizza';
+        let closestKey = 'pizza';
+        let minDistance = Infinity;
         for (const key of categories) {
           const el = document.getElementById(key);
           if (el) {
             const rect = el.getBoundingClientRect();
-            if (rect.top <= 120 && rect.bottom > 120) {
-              found = key;
-              break;
+            const distance = Math.abs(rect.top - 120);
+            if (distance < minDistance) {
+              minDistance = distance;
+              closestKey = key;
             }
           }
         }
-        setSelectedCategory(found);
+        setSelectedCategory(closestKey);
       };
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
     }, []);
   return (
-    <header style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      width: '100%',
-      maxWidth: '1400px',
-      margin: '0 auto 32px auto',
-      background: 'linear-gradient(135deg, #2c3e50 0%, #1a252f 100%)',
-      padding: '16px 48px',
-      borderRadius: '12px',
-      boxShadow: '0 4px 12px rgba(44, 62, 80, 0.25)',
-      position: 'sticky',
-      top: '16px',
-      zIndex: '100'
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
+      <>
+        <header style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          maxWidth: '1400px',
+          margin: '0 auto 32px auto',
+          background: 'linear-gradient(135deg, #2c3e50 0%, #1a252f 100%)',
+          padding: '16px 24px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(44, 62, 80, 0.25)',
+          position: 'sticky',
+          top: '16px',
+          zIndex: '100',
+        }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px', flex: '1 1 0%', minWidth: 0 }}>
         <h1 style={{
           color: '#fff',
           margin: 0,
           fontSize: '3.2rem',
           fontWeight: 800,
           letterSpacing: '1px',
-          textShadow: '0 4px 12px rgba(0, 0, 0, 0.12)'
+          textShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
+          wordBreak: 'break-word',
+          textAlign: 'left',
+          width: '100%',
         }}>
           🍽️ BRO'$ CAFE
         </h1>
         {/* Food categories as clickable buttons */}
-        <nav className="food-category-nav" style={{ marginTop: '6px' }}>
+        <nav className="food-category-nav" style={{ marginTop: '6px', width: '100%', justifyContent: 'flex-start', display: 'flex' }}>
           <ul style={{
             display: 'flex',
+            flexWrap: 'wrap',
             gap: '8px',
             listStyle: 'none',
             padding: 0,
@@ -58,7 +66,9 @@ const Header = ({ cart, onCartClick }) => {
             fontSize: '1rem',
             fontWeight: 600,
             color: '#ff6b35',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            justifyContent: 'flex-start',
+            width: '100%',
           }}>
             {[
               { key: 'pizza', label: 'Pizza', icon: '🍕' },
@@ -77,14 +87,13 @@ const Header = ({ cart, onCartClick }) => {
                     fontWeight: 600,
                     fontSize: '1rem',
                     cursor: 'pointer',
-                    padding: '4px 10px',
+                    padding: '6px 14px',
                     borderRadius: '18px',
                     boxShadow: selectedCategory === cat.key
                       ? '0 2px 8px rgba(255,107,53,0.12)'
                       : '0 1px 4px rgba(255,107,53,0.06)',
-                    display: 'flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '6px',
                     transition: 'background 0.2s, box-shadow 0.2s, color 0.2s',
                   }}
                   onClick={() => {
@@ -96,7 +105,7 @@ const Header = ({ cart, onCartClick }) => {
                   }}
                   aria-label={cat.label}
                 >
-                  <span style={{ fontSize: '1.2rem' }}>{cat.icon}</span>
+                  <span style={{ fontSize: '1.3rem' }}>{cat.icon}</span>
                   {cat.label}
                 </button>
               </li>
@@ -115,7 +124,8 @@ const Header = ({ cart, onCartClick }) => {
           background: 'rgba(255, 255, 255, 0.1)',
           padding: '8px 16px',
           borderRadius: '8px',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          marginLeft: '0',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
@@ -158,7 +168,61 @@ const Header = ({ cart, onCartClick }) => {
         </div>
         <span id="cartBadge" style={{ display: 'none' }}>Cart: 0</span>
       </div>
-    </header>
+      </header>
+      <style>{`
+        @media (max-width: 900px) {
+          header {
+            flex-direction: row !important;
+            align-items: center !important;
+            padding: 12px 8px !important;
+          }
+          .food-category-nav ul {
+            font-size: 0.95rem !important;
+            gap: 6px !important;
+            justify-content: flex-start !important;
+          }
+          h1 {
+            font-size: 2.1rem !important;
+            text-align: left !important;
+          }
+          #cart {
+            margin-left: auto !important;
+            margin-top: 0 !important;
+            justify-content: flex-end !important;
+          }
+        }
+        @media (max-width: 600px) {
+          header {
+            flex-direction: row !important;
+            align-items: center !important;
+            padding: 8px 2px !important;
+          }
+          .food-category-nav ul {
+            font-size: 0.7rem !important;
+            gap: 2px !important;
+            justify-content: flex-start !important;
+          }
+          .food-category-nav ul li {
+            padding: 2px 8px !important;
+          }
+          .food-category-nav ul li button, .food-category-nav ul li span {
+            font-size: 0.7rem !important;
+            padding: 4px 8px !important;
+            min-width: 60px !important;
+            min-height: 28px !important;
+          }
+          h1 {
+            font-size: 1.3rem !important;
+            text-align: left !important;
+          }
+          #cart {
+            margin-left: auto !important;
+            margin-top: 0 !important;
+            justify-content: flex-end !important;
+          }
+        }
+      `}</style>
+    </>
   );
 };
 

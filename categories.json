@@ -1,0 +1,6 @@
+[
+  { "key": "pizza", "label": "Pizza", "icon": "🍕" },
+  { "key": "burgers", "label": "Burgers", "icon": "🍔" },
+  { "key": "drinks", "label": "Drinks", "icon": "🥤" },
+  { "key": "desserts", "label": "Desserts", "icon": "🍨" }
+]

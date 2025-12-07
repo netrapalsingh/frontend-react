@@ -135,10 +135,10 @@ function CheckoutApp(){
 						</div>
 					</div>
 
-					<div className="action-buttons">
-						<button className="btn-primary" onClick={()=>alert('Checkout flow not wired in this demo')}>Pay Now</button>
+					<div className="action-buttons" style={{display:'flex',gap:10,flexDirection:'row',marginTop:20}}>
+						<button className="btn-primary" style={{flex:1,minWidth:140,background:'linear-gradient(135deg, #27ae60 0%, #43e97b 100%)',color:'#fff'}} onClick={()=>alert('Checkout flow not wired in this demo')}>Pay Now</button>
 						{promoApplied && (
-							<button className="btn-secondary" onClick={() => {
+							<button className="btn-secondary" style={{flex:1,minWidth:140}} onClick={() => {
 								setPromoApplied(false);
 								localStorage.removeItem('firstTimePromoApplied');
 								localStorage.removeItem('firstTimePromoDismissed');
@@ -147,7 +147,6 @@ function CheckoutApp(){
 								setCouponInput('');
 							}}>Remove Coupon</button>
 						)}
-						<button className="btn-danger" onClick={clearCart}>Clear Cart</button>
 					</div>
 				</>
 			)}
